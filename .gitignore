@@ -1,0 +1,15 @@
+# Credenciais — NUNCA commitar
+.env
+.env.local
+.env.*.local
+.env.secrets
+
+# Claude Code local
+.claude/settings.local.json
+
+# Binários e temporários
+*.docx
+ola.txt
+
+# Node
+node_modules/

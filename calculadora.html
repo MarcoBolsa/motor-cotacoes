@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Consórcio Rodobens</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #f0f2f5;
+    color: #222;
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #c8102e 100%);
+    color: white;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  header .logo {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+  header .subtitle {
+    font-size: 14px;
+    opacity: 0.85;
+    font-weight: 300;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 28px auto;
+    padding: 0 16px;
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #c8102e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #f0f2f5;
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .field input, .field select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid #ddd;
+    border-radius: 7px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    background: #fafafa;
+  }
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: #c8102e;
+    background: white;
+  }
+  .field .hint {
+    font-size: 11px;
+    color: #999;
+    margin-top: 3px;
+  }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .toggle-row label { text-transform: none; font-size: 13px; color: #444; }
+
+  .btn-calc {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #c8102e, #a00d24);
+    color: white;
+    border: none;
+    border-radius: 9px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(200,16,46,0.35);
+  }
+  .btn-calc:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(200,16,46,0.45);
+  }
+  .btn-calc:active { transform: translateY(0); }
+
+  #resultados { display: none; }
+
+  .res-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+
+  .res-box {
+    background: #f8f9fb;
+    border-radius: 9px;
+    padding: 14px 16px;
+    border-left: 4px solid #ddd;
+  }
+  .res-box.destaque { border-left-color: #c8102e; background: #fff5f6; }
+  .res-box.verde { border-left-color: #1db954; background: #f5fff8; }
+  .res-box.azul { border-left-color: #1a73e8; background: #f3f8ff; }
+  .res-box .lbl {
+    font-size: 11px;
+    font-weight: 600;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+  }
+  .res-box .val {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a1a2e;
+  }
+  .res-box .val.small { font-size: 15px; }
+  .res-box .sub {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #c8102e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 20px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #eee;
+  }
+
+  .alert-info {
+    background: #e8f4fd;
+    border: 1px solid #bee3f8;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #2c5282;
+    margin-top: 14px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-red { background: #fee2e2; color: #c8102e; }
+  .badge-green { background: #dcfce7; color: #16a34a; }
+  .badge-blue { background: #dbeafe; color: #1a73e8; }
+
+  .detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  .detail-table th {
+    background: #f0f2f5;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #555;
+    font-weight: 600;
+  }
+  .detail-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #f0f2f5;
+  }
+  .detail-table tr:last-child td { border-bottom: none; }
+  .detail-table .val-col { text-align: right; font-weight: 700; }
+
+  .tab-btns {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  .tab-btn {
+    padding: 7px 16px;
+    border: 1.5px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.15s;
+  }
+  .tab-btn.active {
+    background: #c8102e;
+    border-color: #c8102e;
+    color: white;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  @media (max-width: 600px) {
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    header { padding: 14px 16px; }
+    .logo { font-size: 20px !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">RODOBENS</div>
+    <div class="subtitle">Calculadora de Consórcio • Uso Interno</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- DADOS DO CRÉDITO -->
+  <div class="card">
+    <h2>📋 Dados do Crédito</h2>
+    <div class="grid grid-2">
+      <div class="field">
+        <label>Produto</label>
+        <select id="produto">
+          <option value="Imovel">Imóvel</option>
+          <option value="Veiculo">Veículo</option>
+          <option value="Caminhao">Caminhão</option>
+          <option value="Servico">Serviço</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Número do Grupo</label>
+        <input type="text" id="grupo" placeholder="Ex: 1768" />
+      </div>
+      <div class="field">
+        <label>Valor do Crédito (R$)</label>
+        <input type="text" id="valorCredito" value="100.000,00" oninput="aplicarMascaraMoeda(this)" />
+      </div>
+      <div class="field">
+        <label>Prazo Contratado (meses)</label>
+        <input type="number" id="prazoContratado" value="216" min="12" max="360" />
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIGURAÇÃO DO GRUPO -->
+  <div class="card">
+    <h2>⚙️ Configuração do Grupo</h2>
+    <div class="grid grid-3">
+      <div class="field">
+        <label>Prazo Original do Grupo (meses)</label>
+        <input type="number" id="prazoOriginal" value="216" />
+      </div>
+      <div class="field">
+        <label>Meses já Realizados</label>
+        <input type="number" id="prazoRealizado" value="104" />
+        <div class="hint">Quantos meses o grupo já tem</div>
+      </div>
+      <div class="field">
+        <label>Mês de Contemplação</label>
+        <input type="number" id="mesContemplacao" value="112" />
+        <div class="hint">Mês em que o cliente será contemplado</div>
+      </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:14px">
+      <div class="field">
+        <label>Tipo de Plano</label>
+        <select id="tipoPlano">
+          <option value="Degrau">Degrau (1ª e 2ª metade diferentes)</option>
+          <option value="Linear">Linear (parcelas iguais)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tipo de Parcela PRÉ-Contemplação</label>
+        <select id="tipoParcela">
+          <option value="Integral">Integral (100%)</option>
+          <option value="Reduzida_70">Reduzida 70%</option>
+          <option value="Reduzida_50">Reduzida 50%</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAXAS E CUSTOS -->
+  <div class="card">
+    <h2>💰 Taxas e Custos</h2>
+    <div class="grid">
+      <div class="field">
+        <label>Taxa de Administração (%)</label>
+        <input type="number" id="taxaAdm" value="17" step="0.1" min="0" max="30" />
+      </div>
+      <div class="field">
+        <label>Fundo de Reserva (%)</label>
+        <input type="number" id="fundoReserva" value="2" step="0.1" min="0" max="10" />
+      </div>
+      <div class="field">
+        <label>Taxa de Adesão (%)</label>
+        <input type="number" id="taxaAdesao" value="1" step="0.1" min="0" max="5" />
+      </div>
+      <div class="field">
+        <label>Reajuste Anual (%)</label>
+        <input type="number" id="reajusteAnual" value="8" step="0.1" min="0" max="30" />
+        <div class="hint">INCC, IPCA, IGP-M etc.</div>
+      </div>
+      <div class="field">
+        <label>Desconto Grandes Negócios (%)</label>
+        <input type="number" id="descontoGN" value="0" step="0.5" min="0" max="30" />
+        <div class="hint">Desconto na taxa de administração</div>
+      </div>
+    </div>
+    <div style="margin-top:14px; display:flex; gap:20px; align-items:center; flex-wrap:wrap">
+      <div class="toggle-row">
+        <input type="checkbox" id="calcularSeguro" checked />
+        <label for="calcularSeguro">Incluir Seguro Prestamista</label>
+      </div>
+      <div class="field" style="flex:0 0 200px; margin:0">
+        <label>Percentual do Seguro (%)</label>
+        <input type="number" id="percentualSeguro" value="0.030900" step="0.000001" min="0" max="1" />
+      </div>
+    </div>
+  </div>
+
+  <!-- LANCE -->
+  <div class="card">
+    <h2>🎯 Lance</h2>
+    <div class="grid grid-2">
+      <div class="field">
+        <label>Base do Lance</label>
+        <select id="baseLance">
+          <option value="Credito_Inicial">Crédito Inicial</option>
+          <option value="Credito_Final">Crédito Final (após reajustes)</option>
+          <option value="Credito_Integral">Crédito Integral</option>
+          <option value="Credito_Reduzida">Crédito Reduzida</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Lance Embutido (%)</label>
+        <input type="number" id="lanceEmbutido" value="30" step="1" min="0" max="80" />
+        <div class="hint">Percentual do crédito já embutido no lance</div>
+      </div>
+    </div>
+    <div style="margin-top:14px">
+      <div class="tab-btns">
+        <button class="tab-btn active" onclick="setModoLance('parcelas', this)">Por Número de Parcelas</button>
+        <button class="tab-btn" onclick="setModoLance('valor', this)">Por Valor (R$)</button>
+      </div>
+      <div id="tab-parcelas" class="tab-panel active">
+        <div class="field" style="max-width:250px">
+          <label>Número de Parcelas do Lance</label>
+          <input type="number" id="lanceParcelas" value="45" min="0" />
+        </div>
+      </div>
+      <div id="tab-valor" class="tab-panel">
+        <div class="field" style="max-width:250px">
+          <label>Valor do Lance (R$)</label>
+          <input type="number" id="lanceValor" value="0" min="0" step="1000" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPGRADE E ESTRATÉGIA -->
+  <div class="card">
+    <h2>⬆️ Upgrade e Estratégia Pós</h2>
+    <div class="grid grid-2">
+      <div class="field">
+        <label>Tipo de Upgrade</label>
+        <select id="tipoUpgrade" onchange="atualizarUpgrade()">
+          <option value="Nenhum">Nenhum</option>
+          <option value="Acrescimo_Percentual">Acréscimo Percentual (%)</option>
+          <option value="Acrescimo_Valor">Valor Final Fixo (R$)</option>
+        </select>
+      </div>
+      <div class="field" id="campo-upgrade" style="display:none">
+        <label id="label-upgrade">Valor do Upgrade</label>
+        <input type="text" id="valorUpgrade" value="0" />
+      </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:14px">
+      <div class="field">
+        <label>Estratégia Pós-Contemplação</label>
+        <select id="estrategiaPos">
+          <option value="Reduzir_Valor">Reduzir Valor da Parcela</option>
+          <option value="Reduzir_Prazo">Reduzir Prazo</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-calc" onclick="calcular()">▶ CALCULAR SIMULAÇÃO</button>
+
+  <!-- RESULTADOS -->
+  <div id="resultados">
+    <div class="card" style="margin-top:20px">
+      <h2>📊 Resultados da Simulação</h2>
+
+      <div class="section-title">Créditos</div>
+      <div class="res-grid" id="res-creditos"></div>
+
+      <div class="section-title">Parcelas PRÉ-Contemplação</div>
+      <div class="res-grid" id="res-pre"></div>
+
+      <div class="section-title">Lance</div>
+      <div class="res-grid" id="res-lance"></div>
+
+      <div class="section-title">Parcelas PÓS-Contemplação</div>
+      <div class="res-grid" id="res-pos"></div>
+
+      <div class="section-title">Prazos e Custos</div>
+      <div class="res-grid" id="res-prazos"></div>
+
+      <div id="res-detalhes" style="margin-top:20px"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let modoLance = 'parcelas';
+
+function setModoLance(modo, btn) {
+  modoLance = modo;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + modo).classList.add('active');
+}
+
+function atualizarUpgrade() {
+  const tipo = document.getElementById('tipoUpgrade').value;
+  const campo = document.getElementById('campo-upgrade');
+  const label = document.getElementById('label-upgrade');
+  if (tipo === 'Nenhum') {
+    campo.style.display = 'none';
+  } else {
+    campo.style.display = '';
+    label.textContent = tipo === 'Acrescimo_Percentual' ? 'Percentual do Upgrade (%)' : 'Valor Final do Crédito (R$)';
+    const inp = document.getElementById('valorUpgrade');
+    if (tipo === 'Acrescimo_Valor') {
+      inp.oninput = function() { aplicarMascaraMoeda(this); };
+    } else {
+      inp.oninput = null;
+    }
+  }
+}
+
+function aplicarMascaraMoeda(input) {
+  let v = input.value.replace(/\D/g, '');
+  if (!v) { input.value = ''; return; }
+  v = (parseInt(v, 10) / 100).toFixed(2);
+  input.value = v.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function parseMoeda(v) {
+  return parseFloat(String(v).replace(/\./g, '').replace(',', '.')) || 0;
+}
+
+function fmt(v) {
+  return 'R$ ' + v.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function fmtPct(v) {
+  return v.toFixed(2).replace('.', ',') + '%';
+}
+
+function calcularParcelaBase(valorCredito, prazo, tipoPlano, tipoParcela, taxaAdm, fundoReserva, taxaAdesao, pctSeguro, comSeguro) {
+  const ta = valorCredito * (taxaAdm / 100);
+  const fr = valorCredito * (fundoReserva / 100);
+  const taad = valorCredito * (taxaAdesao / 100);
+  const totalAdm = ta + fr + taad;
+
+  const spR = comSeguro ? (valorCredito + totalAdm) * (pctSeguro / 100) : 0;
+  const pAm = valorCredito / prazo;
+
+  let reducao = 1.0;
+  if (tipoParcela === 'Reduzida_70') reducao = 0.7;
+  if (tipoParcela === 'Reduzida_50') reducao = 0.5;
+
+  if (tipoPlano === 'Linear') {
+    const adminMensal = totalAdm / prazo;
+    const base = pAm + adminMensal;
+    return { parcela: base * reducao + spR, parcelaFinal: null };
+  } else {
+    const adminMetade = totalAdm / (prazo / 2);
+    const base1 = pAm + adminMetade;
+    const base2 = pAm;
+    return {
+      parcela: base1 * reducao + spR,
+      parcelaFinal: base2 * reducao + spR
+    };
+  }
+}
+
+function calcular() {
+  const d = {
+    produto: document.getElementById('produto').value,
+    grupo: document.getElementById('grupo').value,
+    valorCredito: parseMoeda(document.getElementById('valorCredito').value),
+    prazoContratado: +document.getElementById('prazoContratado').value,
+    prazoOriginal: +document.getElementById('prazoOriginal').value,
+    prazoRealizado: +document.getElementById('prazoRealizado').value,
+    mesContemplacao: +document.getElementById('mesContemplacao').value,
+    tipoPlano: document.getElementById('tipoPlano').value,
+    tipoParcela: document.getElementById('tipoParcela').value,
+    taxaAdm: +document.getElementById('taxaAdm').value,
+    fundoReserva: +document.getElementById('fundoReserva').value,
+    taxaAdesao: +document.getElementById('taxaAdesao').value,
+    reajusteAnual: +document.getElementById('reajusteAnual').value,
+    descontoGN: +document.getElementById('descontoGN').value,
+    calcularSeguro: document.getElementById('calcularSeguro').checked,
+    percentualSeguro: +document.getElementById('percentualSeguro').value,
+    baseLance: document.getElementById('baseLance').value,
+    lanceEmbutido: +document.getElementById('lanceEmbutido').value,
+    tipoUpgrade: document.getElementById('tipoUpgrade').value,
+    valorUpgrade: parseMoeda(document.getElementById('valorUpgrade').value),
+    estrategiaPos: document.getElementById('estrategiaPos').value,
+    usarLanceValor: modoLance === 'valor',
+    lanceTotalValor: +document.getElementById('lanceValor').value,
+    lanceTotalParcelas: +document.getElementById('lanceParcelas').value,
+  };
+
+  const preBase = calcularParcelaBase(
+    d.valorCredito, d.prazoContratado, d.tipoPlano, d.tipoParcela,
+    d.taxaAdm, d.fundoReserva, d.taxaAdesao,
+    d.calcularSeguro ? d.percentualSeguro : 0, d.calcularSeguro
+  );
+
+  const numReajustes = Math.floor((d.mesContemplacao - 1) / 12);
+  const creditoReajustado = d.valorCredito * Math.pow(1 + d.reajusteAnual / 100, numReajustes);
+
+  let creditoFinal = creditoReajustado;
+  if (d.tipoUpgrade === 'Acrescimo_Percentual') {
+    creditoFinal = creditoReajustado * (1 + d.valorUpgrade / 100);
+  } else if (d.tipoUpgrade === 'Acrescimo_Valor') {
+    creditoFinal = d.valorUpgrade;
+  }
+
+  let creditoBaseLance = d.valorCredito;
+  let tipoParcelaLance = 'Integral';
+  if (d.baseLance === 'Credito_Final') {
+    creditoBaseLance = creditoFinal;
+  } else if (d.baseLance === 'Credito_Reduzida') {
+    tipoParcelaLance = d.tipoParcela;
+  }
+
+  const parcelaLance = calcularParcelaBase(
+    creditoBaseLance, d.prazoContratado, d.tipoPlano, tipoParcelaLance,
+    d.taxaAdm, d.fundoReserva, d.taxaAdesao,
+    d.calcularSeguro ? d.percentualSeguro : 0, d.calcularSeguro
+  );
+  const p1Lance = parcelaLance.parcela;
+  const p2Lance = parcelaLance.parcelaFinal !== null ? parcelaLance.parcelaFinal : p1Lance;
+  const numMetade = Math.ceil(d.prazoContratado / 2);
+
+  let lanceTotalR = 0;
+  let lanceTotalN = 0;
+
+  if (d.usarLanceValor) {
+    let acumulado = 0;
+    for (let i = 0; i < d.prazoContratado; i++) {
+      const idx = d.prazoContratado - 1 - i;
+      const vp = (d.tipoPlano === 'Degrau' && idx >= numMetade) ? p2Lance : p1Lance;
+      acumulado += vp;
+      lanceTotalN++;
+      if (acumulado >= d.lanceTotalValor) break;
+    }
+    lanceTotalR = d.lanceTotalValor;
+  } else {
+    lanceTotalN = d.lanceTotalParcelas;
+    for (let i = 0; i < lanceTotalN; i++) {
+      const idx = d.prazoContratado - 1 - i;
+      const vp = (d.tipoPlano === 'Degrau' && idx >= numMetade) ? p2Lance : p1Lance;
+      lanceTotalR += vp;
+    }
+  }
+
+  const prazoRestanteGrupo = d.prazoOriginal - d.prazoRealizado;
+  const furoN = Math.max(0, d.prazoContratado - prazoRestanteGrupo);
+  let furoR = 0;
+  for (let i = 0; i < furoN; i++) {
+    const idx = d.prazoContratado - 1 - i;
+    const vp = (d.tipoPlano === 'Degrau' && idx >= numMetade) ? p2Lance : p1Lance;
+    furoR += vp;
+  }
+
+  const baseEmbutido = (d.baseLance === 'Credito_Final') ? creditoFinal : d.valorCredito;
+  const lanceEmbutidoR = baseEmbutido * (d.lanceEmbutido / 100);
+  const creditoLiquido = creditoFinal - lanceEmbutidoR;
+  const lanceBolsoR = Math.max(0, lanceTotalR - lanceEmbutidoR);
+  const lanceBolsoPctLiquido = creditoLiquido > 0 ? (lanceBolsoR / creditoLiquido) * 100 : 0;
+
+  const saldoLanceN = Math.max(0, lanceTotalN - furoN);
+  let saldoLanceR = 0;
+  for (let i = 0; i < saldoLanceN; i++) {
+    const idx = d.prazoContratado - 1 - furoN - i;
+    const vp = (d.tipoPlano === 'Degrau' && idx >= numMetade) ? p2Lance : p1Lance;
+    saldoLanceR += vp;
+  }
+
+  const parcelasJaPagas = d.mesContemplacao;
+  let prazoFinal;
+  if (d.estrategiaPos === 'Reduzir_Prazo') {
+    prazoFinal = Math.max(0, d.prazoContratado - parcelasJaPagas - furoN - saldoLanceN);
+  } else {
+    prazoFinal = Math.max(0, d.prazoContratado - parcelasJaPagas - furoN);
+  }
+
+  let diferencaAcumulada = 0;
+  if (d.tipoParcela !== 'Integral') {
+    for (let mes = 1; mes < d.mesContemplacao; mes++) {
+      const reaj = Math.floor((mes - 1) / 12);
+      const creditoMes = d.valorCredito * Math.pow(1 + d.reajusteAnual / 100, reaj);
+      const pInt = calcularParcelaBase(creditoMes, d.prazoContratado, d.tipoPlano, 'Integral',
+        d.taxaAdm, d.fundoReserva, d.taxaAdesao, 0, false).parcela;
+      const pRed = calcularParcelaBase(creditoMes, d.prazoContratado, d.tipoPlano, d.tipoParcela,
+        d.taxaAdm, d.fundoReserva, d.taxaAdesao, 0, false).parcela;
+      diferencaAcumulada += pInt - pRed;
+    }
+  }
+  const acrescimoMensalDiferenca = prazoFinal > 0 ? diferencaAcumulada / prazoFinal : 0;
+
+  const taFinal = creditoFinal * (d.taxaAdm / 100);
+  const spRPos = d.calcularSeguro ? (creditoFinal + taFinal) * (d.percentualSeguro / 100) : 0;
+
+  const valorUpgradeDelta = creditoFinal - creditoReajustado;
+  const taxaAdmUpgrade = valorUpgradeDelta * (d.taxaAdm / 100);
+  const amortUpgradeMensal = prazoFinal > 0 ? valorUpgradeDelta / prazoFinal : 0;
+
+  let taxaUpgradeMensal1a = 0;
+  let taxaUpgradeMensal2a = 0;
+  if (d.tipoPlano === 'Linear') {
+    taxaUpgradeMensal1a = prazoFinal > 0 ? taxaAdmUpgrade / prazoFinal : 0;
+    taxaUpgradeMensal2a = taxaUpgradeMensal1a;
+  } else {
+    const metadeOrig = Math.ceil(d.prazoContratado / 2);
+    const parcelas1aRestantes = Math.max(0, metadeOrig - d.mesContemplacao);
+    taxaUpgradeMensal1a = parcelas1aRestantes > 0 ? taxaAdmUpgrade / parcelas1aRestantes : 0;
+    taxaUpgradeMensal2a = 0;
+  }
+
+  const descontoMensal = (d.estrategiaPos === 'Reduzir_Valor' && prazoFinal > 0) ? saldoLanceR / prazoFinal : 0;
+
+  let novaP1, novaP2;
+
+  if (d.baseLance === 'Credito_Final') {
+    const finalBase = calcularParcelaBase(
+      creditoFinal, d.prazoContratado, d.tipoPlano, 'Integral',
+      d.taxaAdm, d.fundoReserva, d.taxaAdesao,
+      d.calcularSeguro ? d.percentualSeguro : 0, d.calcularSeguro
+    );
+    novaP1 = finalBase.parcela - descontoMensal;
+    novaP2 = (finalBase.parcelaFinal !== null ? finalBase.parcelaFinal : finalBase.parcela) - descontoMensal;
+  } else {
+    const preBaseNoSeg = calcularParcelaBase(
+      d.valorCredito, d.prazoContratado, d.tipoPlano, 'Integral',
+      d.taxaAdm, d.fundoReserva, d.taxaAdesao, 0, false
+    );
+    const p1Pre = preBaseNoSeg.parcela;
+    const p2Pre = preBaseNoSeg.parcelaFinal !== null ? preBaseNoSeg.parcelaFinal : p1Pre;
+
+    novaP1 = p1Pre + amortUpgradeMensal + taxaUpgradeMensal1a + spRPos - descontoMensal;
+    if (d.tipoPlano === 'Degrau') {
+      novaP2 = p2Pre + amortUpgradeMensal + taxaUpgradeMensal2a + spRPos - descontoMensal;
+    } else {
+      novaP2 = novaP1;
+    }
+  }
+
+  const taxaAdmFinal = d.taxaAdm * (1 - d.descontoGN / 100);
+  const seguroMensal = d.calcularSeguro
+    ? (d.valorCredito + d.valorCredito * d.taxaAdm / 100) * (d.percentualSeguro / 100)
+    : 0;
+
+  const isDegrau = d.tipoPlano === 'Degrau';
+  const preParc = preBase;
+
+  document.getElementById('res-creditos').innerHTML = `
+    <div class="res-box azul">
+      <div class="lbl">Crédito Inicial</div>
+      <div class="val">${fmt(d.valorCredito)}</div>
+    </div>
+    <div class="res-box azul">
+      <div class="lbl">Crédito Reajustado (${numReajustes}x ${d.reajusteAnual}%)</div>
+      <div class="val">${fmt(creditoReajustado)}</div>
+    </div>
+    <div class="res-box destaque">
+      <div class="lbl">Crédito Final</div>
+      <div class="val">${fmt(creditoFinal)}</div>
+      ${d.tipoUpgrade !== 'Nenhum' ? `<div class="sub">Com upgrade ${d.tipoUpgrade === 'Acrescimo_Percentual' ? d.valorUpgrade + '%' : fmt(d.valorUpgrade)}</div>` : ''}
+    </div>
+    <div class="res-box verde">
+      <div class="lbl">Crédito Líquido</div>
+      <div class="val">${fmt(creditoLiquido)}</div>
+      <div class="sub">Após lance embutido</div>
+    </div>
+  `;
+
+  let preHtml = '';
+  if (isDegrau) {
+    preHtml = `
+      <div class="res-box destaque">
+        <div class="lbl">Parcela PRÉ — 1ª Metade</div>
+        <div class="val">${fmt(preParc.parcela)}</div>
+        <div class="sub">Meses 1 a ${Math.ceil(d.prazoContratado / 2)}</div>
+      </div>
+      <div class="res-box destaque">
+        <div class="lbl">Parcela PRÉ — 2ª Metade</div>
+        <div class="val">${fmt(preParc.parcelaFinal)}</div>
+        <div class="sub">Meses ${Math.ceil(d.prazoContratado / 2) + 1} a ${d.prazoContratado}</div>
+      </div>`;
+  } else {
+    preHtml = `
+      <div class="res-box destaque">
+        <div class="lbl">Parcela PRÉ-Contemplação</div>
+        <div class="val">${fmt(preParc.parcela)}</div>
+        <div class="sub">Parcela Linear — ${d.tipoParcela}</div>
+      </div>`;
+  }
+  preHtml += `
+    <div class="res-box">
+      <div class="lbl">Tipo de Parcela</div>
+      <div class="val small">${d.tipoParcela === 'Integral' ? 'Integral 100%' : d.tipoParcela === 'Reduzida_70' ? 'Reduzida 70%' : 'Reduzida 50%'}</div>
+    </div>
+    ${d.calcularSeguro ? `<div class="res-box">
+      <div class="lbl">Seguro Prestamista</div>
+      <div class="val small">${fmt(seguroMensal)}/mês</div>
+      <div class="sub">${d.percentualSeguro}% sobre crédito + adm</div>
+    </div>` : ''}
+  `;
+  document.getElementById('res-pre').innerHTML = preHtml;
+
+  document.getElementById('res-lance').innerHTML = `
+    <div class="res-box destaque">
+      <div class="lbl">Lance Total</div>
+      <div class="val">${fmt(lanceTotalR)}</div>
+      <div class="sub">${lanceTotalN} parcelas</div>
+    </div>
+    <div class="res-box">
+      <div class="lbl">Lance Embutido</div>
+      <div class="val small">${fmt(lanceEmbutidoR)}</div>
+      <div class="sub">${d.lanceEmbutido}% do crédito base</div>
+    </div>
+    <div class="res-box verde">
+      <div class="lbl">Lance Bolso (Recurso Próprio)</div>
+      <div class="val">${fmt(lanceBolsoR)}</div>
+      <div class="sub">${fmtPct(lanceBolsoPctLiquido)} do crédito líquido</div>
+    </div>
+    <div class="res-box">
+      <div class="lbl">Custo do Furo</div>
+      <div class="val small">${fmt(furoR)}</div>
+      <div class="sub">${furoN} parcelas perdidas</div>
+    </div>
+  `;
+
+  let posHtml = '';
+  if (prazoFinal === 0) {
+    posHtml = `
+      <div class="res-box verde" style="grid-column:1/-1">
+        <div class="lbl">Situação Pós-Contemplação</div>
+        <div class="val small">Sem parcelas restantes</div>
+        <div class="sub">O lance e furo absorveram todo o prazo.</div>
+      </div>`;
+  } else if (isDegrau) {
+    posHtml = `
+      <div class="res-box destaque">
+        <div class="lbl">Parcela PÓS — 1ª Metade</div>
+        <div class="val">${fmt(novaP1)}</div>
+      </div>
+      <div class="res-box destaque">
+        <div class="lbl">Parcela PÓS — 2ª Metade</div>
+        <div class="val">${fmt(novaP2)}</div>
+      </div>`;
+  } else {
+    posHtml = `
+      <div class="res-box destaque">
+        <div class="lbl">Parcela PÓS-Contemplação</div>
+        <div class="val">${fmt(novaP1)}</div>
+      </div>`;
+  }
+  posHtml += `
+    <div class="res-box azul">
+      <div class="lbl">Prazo Final Restante</div>
+      <div class="val small">${prazoFinal} meses</div>
+      <div class="sub">Estratégia: ${d.estrategiaPos === 'Reduzir_Valor' ? 'Reduzir Valor' : 'Reduzir Prazo'}</div>
+    </div>
+    ${diferencaAcumulada > 0 ? `<div class="res-box">
+      <div class="lbl">Diferença Acumulada</div>
+      <div class="val small">${fmt(diferencaAcumulada)}</div>
+      <div class="sub">Distribuída em ${prazoFinal} parcelas (${fmt(acrescimoMensalDiferenca)}/mês)</div>
+    </div>` : ''}
+  `;
+  document.getElementById('res-pos').innerHTML = posHtml;
+
+  document.getElementById('res-prazos').innerHTML = `
+    <div class="res-box">
+      <div class="lbl">Prazo Contratado</div>
+      <div class="val small">${d.prazoContratado} meses</div>
+    </div>
+    <div class="res-box">
+      <div class="lbl">Parcelas Já Pagas</div>
+      <div class="val small">${parcelasJaPagas}</div>
+    </div>
+    <div class="res-box">
+      <div class="lbl">Furo</div>
+      <div class="val small">${furoN} parcelas</div>
+    </div>
+    <div class="res-box">
+      <div class="lbl">Saldo do Lance</div>
+      <div class="val small">${saldoLanceN} parcelas / ${fmt(saldoLanceR)}</div>
+    </div>
+    <div class="res-box">
+      <div class="lbl">Taxa Adm Final</div>
+      <div class="val small">${fmtPct(taxaAdmFinal)}</div>
+      ${d.descontoGN > 0 ? `<div class="sub">Com desconto de ${d.descontoGN}% (GN)</div>` : ''}
+    </div>
+    <div class="res-box">
+      <div class="lbl">Mês de Contemplação</div>
+      <div class="val small">Mês ${d.mesContemplacao}</div>
+      <div class="sub">${numReajustes} reajuste(s) aplicado(s)</div>
+    </div>
+  `;
+
+  document.getElementById('res-detalhes').innerHTML = `
+    <div class="section-title">Composição da Parcela PRÉ-Contemplação</div>
+    <table class="detail-table">
+      <thead><tr><th>Componente</th><th class="val-col">Valor Total</th><th class="val-col">Por Parcela (${d.prazoContratado} meses)</th></tr></thead>
+      <tbody>
+        <tr><td>Crédito (Amortização Pura)</td><td class="val-col">${fmt(d.valorCredito)}</td><td class="val-col">${fmt(d.valorCredito / d.prazoContratado)}</td></tr>
+        <tr><td>Taxa de Administração (${d.taxaAdm}%)</td><td class="val-col">${fmt(d.valorCredito * d.taxaAdm / 100)}</td><td class="val-col">${fmt(d.valorCredito * d.taxaAdm / 100 / d.prazoContratado)}</td></tr>
+        <tr><td>Fundo de Reserva (${d.fundoReserva}%)</td><td class="val-col">${fmt(d.valorCredito * d.fundoReserva / 100)}</td><td class="val-col">${fmt(d.valorCredito * d.fundoReserva / 100 / d.prazoContratado)}</td></tr>
+        <tr><td>Taxa de Adesão (${d.taxaAdesao}%)</td><td class="val-col">${fmt(d.valorCredito * d.taxaAdesao / 100)}</td><td class="val-col">${fmt(d.valorCredito * d.taxaAdesao / 100 / d.prazoContratado)}</td></tr>
+        ${d.calcularSeguro ? `<tr><td>Seguro Prestamista (${d.percentualSeguro}%)</td><td class="val-col">—</td><td class="val-col">${fmt(seguroMensal)}</td></tr>` : ''}
+      </tbody>
+    </table>
+  `;
+
+  document.getElementById('resultados').style.display = 'block';
+  document.getElementById('resultados').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
