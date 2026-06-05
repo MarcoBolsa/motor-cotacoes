@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/root/projetos/bcotas-2026/squads/kaizen-v2/scripts/stop-capture.cjs\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/root/projetos/bcotas-2026/squads/kaizen-v2/scripts/session-briefing.cjs\"",
+            "timeout": 3
+          }
+        ]
+      }
+    ]
+  }
+}
