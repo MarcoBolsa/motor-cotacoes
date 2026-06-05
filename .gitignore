@@ -13,3 +13,10 @@ ola.txt
 
 # Node
 node_modules/
+
+# --- IDE/AI tooling configs (Achado B — Marco 2026-06-05) ---
+.cursor/
+.gemini/
+.codex/
+.kimi/
+.antigravity/
