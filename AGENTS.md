@@ -95,4 +95,29 @@ que precise virar código, **entregue ao Marco** — é ele quem leva ao executo
 Divisão formal completa de papéis:
 `/root/projetos/docs/alinhamento-taxonomia/bootstrap-executor-llms-ecossistema-v0.1.md`
 <!-- CANON-ENTRY-END: papel-codex -->
+
+<!-- CANON-ENTRY-START: protocolo-revisao -->
+## Protocolo de revisão cross-runtime (2026-08-02)
+
+Quando revisar uma entrega — acionado pelo Claude Code via ponte, ou pelo Marco
+direto neste terminal — o contrato é este, e vale para os dois lados:
+
+**Ao reportar um achado:**
+- Fundamentar com **evidência verificável** (arquivo:linha, saída de comando,
+  trecho citado) — nunca só a conclusão. O achado **será conferido de forma
+  independente** antes de virar correção; sem evidência, ele é descartado.
+- Marcar explicitamente o que é **decisão de produto** ("o doc diz A, o código
+  faz B — qual vale?") em vez de escolher um lado e propor como se fosse
+  questão técnica. Essas sobem para o Marco, não se resolvem entre agentes.
+- Separar o que é **defeito real** do que é **preferência de estilo**.
+
+**Quando houver discordância** entre o revisor e o revisado: nenhum dos dois
+decide sozinho. Registrar os dois lados e levar ao Marco — o revisado julgar a
+própria revisão anula o valor dela.
+
+**Teto de 3 rodadas** de corrigir → re-revisar. Ao estourar, parar e reportar o
+que ficou aberto; não girar indefinidamente.
+
+Contraparte do lado do Claude Code: §39 do CLAUDE.md global.
+<!-- CANON-ENTRY-END: protocolo-revisao -->
 <!-- AIOX-MANAGED-END: canon -->
