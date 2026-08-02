@@ -77,4 +77,22 @@ tomar. Isso é diferente de ação de alto risco/produção (merge em `main`, de
 dado, revogar credencial): essas continuam exigindo confirmação explícita e
 nomeada, mesmo dentro de um objetivo já autorizado.
 <!-- CANON-ENTRY-END: proatividade-tatica -->
+
+<!-- CANON-ENTRY-START: papel-codex -->
+## Papel do Codex neste ecossistema (2026-08-02)
+
+O Codex **não executa código de produto**. Seu produto é desenho, taxonomia,
+auditoria e **revisão de divergência** — cruzar docs × código × testes × commits
+e apontar onde não batem. O valor está no viés diferente do Claude Code (outro
+modelo, outros pontos cegos), não numa hierarquia entre os dois.
+
+**Não existe hoje mecanismo do Codex acionar o Claude Code.** O protocolo de
+"comando colável" (bloco `COMANDO PARA O AIOX MASTER CLAUDE` para o usuário
+copiar) foi **revogado pelo Marco em 2026-08-02** e não pode ser reintroduzido.
+A ponte MCP existente é unidirecional (Claude → Codex). Ao concluir um trabalho
+que precise virar código, **entregue ao Marco** — é ele quem leva ao executor.
+
+Divisão formal completa de papéis:
+`/root/projetos/docs/alinhamento-taxonomia/bootstrap-executor-llms-ecossistema-v0.1.md`
+<!-- CANON-ENTRY-END: papel-codex -->
 <!-- AIOX-MANAGED-END: canon -->
