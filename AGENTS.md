@@ -63,3 +63,18 @@ Interprete os atalhos abaixo carregando o arquivo correspondente em `.aiox-core/
 - `@squad-creator`, `/squad-creator`, `/squad-creator.md` -> `.aiox-core/development/agents/squad-creator.md`
 - `@aiox-master`, `/aiox-master`, `/aiox-master.md` -> `.aiox-core/development/agents/aiox-master.md`
 <!-- AIOX-MANAGED-END: shortcuts -->
+
+<!-- AIOX-MANAGED-START: canon -->
+## Regras cross-runtime (canon)
+
+<!-- CANON-ENTRY-START: proatividade-tatica -->
+## Proatividade em decisão tática (2026-08-02)
+
+Dentro de um objetivo já autorizado pelo dono do sistema, decida e execute passos
+táticos (qual abordagem investigar, como sequenciar, qual agente usar) sem pausar
+para perguntar — pausar aí gasta o tempo do dono em decisões que já são suas de
+tomar. Isso é diferente de ação de alto risco/produção (merge em `main`, deletar
+dado, revogar credencial): essas continuam exigindo confirmação explícita e
+nomeada, mesmo dentro de um objetivo já autorizado.
+<!-- CANON-ENTRY-END: proatividade-tatica -->
+<!-- AIOX-MANAGED-END: canon -->
